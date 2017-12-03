@@ -16,7 +16,8 @@ The goals / steps of this project are the following:
 
 ## Project Video
 
-<a href="https://youtu.be/am9vMFgmNpU" target="_blank"><img src="output_images/thumbnail.png" alt="Combined Image" width="480" height="320" border="10" /></a>
+[image1]: ./output_images/thumbnail.png "Video Thumbnail"
+[![Vehicle Detection][image1]](https://youtu.be/j0dS0K0BubU "Vehicle Detection Video")
 
 
 ## Dataset information
@@ -53,9 +54,42 @@ YCrCb color channels resulted in the highest accuracy in the classifier
 
 ## SVM classifier
 
-The SVM classifier on the dataset with a 0.987 accuracy.
+However it seems that the reasoning behind choosing the HOG parameters is partly missing. It is written the YCrCb gave the best accuracy. What other color space were tried and what was the difference in the accuracies? And how did you choose the values for the other HOG-parameters (orient, pix_per_cell, cell_per_block)?
+
+* The number of "orient" is specified as an integer, and represents the number of orientation bins that the gradient information will be split up into in the histogram.
+* The "pixels_per_cell" parameter specifies the cell size over which each gradient histogram is computed.
+* The "cells_per_block" parameter is also passed as a 2-tuple, and specifies the local area over which the histogram counts in a given cell will be normalized.
+
+
+|Configuration|Colorspace|Orientations|Pixels Per Cell|Cells Per Block|HOG Channel|Classifier|Accuracy|
+| - | - | - | - | - | - | - | - |
+| 1 | RGB | 9 | 8 | 2 | ALL | Linear SVC | 97.92% |
+| 2 | HSV | 9 | 8 | 2 | ALL | Linear SVC | 99.01% |
+| 3 | LUV | 9 | 8 | 2 | ALL | Linear SVC | 98.56% |
+| 4 | HLS | 9 | 8 | 2 | ALL | Linear SVC | 99.00% |
+| 5 | YUV | 9 | 8 | 2 | ALL | Linear SVC | 98.59% |
+| 6 | YCrCb | 9 | 8 | 2 | ALL | Linear SVC | 99.01% |
+
+HSV and YCrCb have the best accuracy of 99.01%.
+
+YCrCb is used for final implementation.
 
 ## Sliding Window Search
+
+Why did you choose three window sizes?
+* The three window sizes cover 3 different part of the drivable road path.
+* When the vehicles was far away from the camera, it would appear small size in the image. When the vehicles was closed to the camera, it would appear large size in the image.
+
+How did you choose the exact sizes?
+* The final implementation scale are for small (0.9), medium (1.4) and large (2.3).
+* The three windows size manage to detect most of the vehicles within the drivable road path.
+* The final exact sizes was obtained through try and error method
+
+What overlap ratio did you use? How did you choose that ratio?
+* pix_per_cell = 8
+* cells_per_step = 2
+* This means that it would result in a search window overlap of 75%
+
 
 The image shown the search area of the sliding window with 3 different search areas.
 
@@ -72,3 +106,8 @@ By using this queue, it able to smooth the bounding boxes between frames. This s
 ## Conclusion
 
 The image processing pipeline is not efficient. It took quite a while to process the video. A better method is required to process the image on real-time.
+
+## Discussion
+* I did not make any changes to the nature of the dataset. In order to improve robustness and account for varying conditions, further data augmentation would help.
+* Feature such as indicate the direction of the moving car
+* Using DNN or CNN such as YOLO or R-CNN, which is fast and relatively accurate.
